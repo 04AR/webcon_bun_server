@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web-Con 🎮</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="./utils/joy.min.js"></script>
+    <script src="./utils/trackpad.min.js"></script>
+</head>
+
+<body>
+    <div id="latency-display">latency: 0 ms</div>
+
+    <div class="gamepad">
+        <!-- First row: Left and Right buttons -->
+        <div class="LB item">
+            <div class="button" data-key="q">L1</div>
+            <div class="button" data-key="z">L2</div>
+        </div>
+
+        <div class="RB item">
+            <div class="button" data-key="e">R1</div>
+            <div class="button" data-key="x">R2</div>
+        </div>
+
+        <!-- Second row: D-Pad -->
+        <div class="item" id="dpad">
+            dpad
+            <div class="empty"></div>
+            <div class="button" data-key="w">▲</div>
+            <div class="empty"></div>
+            <div class="button" data-key="a">◀</div>
+            <div class="button" data-key="space">●</div>
+            <div class="button" data-key="d">▶</div>
+            <div class="empty"></div>
+            <div class="button" data-key="s">▼</div>
+            <div class="empty"></div>
+        </div>
+
+        <div id="myTrackPad">
+            trackpad
+        </div>
+
+        <!-- Second row: D-Pad -->
+        <div class="item" id="dpad">
+            <div class="empty"></div>
+            <div class="button" data-key="w">▲</div>
+            <div class="empty"></div>
+            <div class="button" data-key="a">◀</div>
+            <div class="button" data-key="space">●</div>
+            <div class="button" data-key="d">▶</div>
+            <div class="empty"></div>
+            <div class="button" data-key="s">▼</div>
+            <div class="empty"></div>
+        </div>
+
+
+        <!-- Third row: Joysticks and Start/Stop -->
+        <div class="joyL item" id="joyDivL" style="width:200px;height:200px;"></div>
+        <div class="start button item" data-key="enter">Start</div>
+        <div class="stop button item" data-key="esc">Stop</div>
+        <div class="joyR item" id="joyDivR" style="width:200px;height:200px;"></div>
+    </div>
+
+    <script>
+        const socket = new WebSocket("ws://" + location.host + "/ws");
+
+        socket.onopen = () => console.log("Connected to WebSocket server");
+
+        let now_time = Date.now();
+
+        // Update latency display
+        let latency_display = document.getElementById("latency-display");
+
+        socket.onmessage = (event) => {
+            const { msg } = JSON.parse(event.data);
+            latency_display.textContent = `latency: ${Date.now() - now_time} ms`;
+        };
+
+        document.querySelectorAll('.button').forEach(button => {
+            button.addEventListener('click', () => {
+                const key = button.dataset.key;
+                // Emit keystroke to the server
+                send_keystrokes(key);
+            });
+        });
+
+        new TrackPad("myTrackPad", { width: "500px", height: "350px" }, function (event) {
+            console.log("Gesture event:", event);
+            // event.type can be: "tap", "doubleTap", "pinch", "twoFingerScroll", "twoFingerTap", or "touchmove"
+        })
+
+        JoyStick('joyDivR', {}, function (stickData) {
+            console.log(stickData);
+            // Emit mouse to the server
+            send_mouse([stickData.x, stickData.y]);
+
+        });
+
+        JoyStick('joyDivL', {}, function (stickData) {
+            console.log(stickData);
+            // Emit mouse to the server
+            send_mouse([stickData.x, stickData.y]);
+
+        });
+
+
+        function send_xbox(data) {
+            send(JSON.stringify({ type: "xbox", msg: data }));
+        }
+
+        function send_mouse(data) {
+            send(JSON.stringify({ type: "mouse", msg: data }));
+        }
+
+        function send_keystrokes(data) {
+            send(JSON.stringify({ type: "keystroke", msg: data }));
+        }
+
+        function send(data) {
+            now_time = Date.now();
+            try {
+                socket.send(data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        socket.onclose = () => console.log("Disconnected from server");
+
+    </script>
+</body>
+
+</html>

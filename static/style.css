@@ -1,0 +1,191 @@
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #F5F5FA;
+  /* overflow: hidden; */
+  font-family: Arial, sans-serif;
+}
+
+/* Latency Display */
+#latency-display {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+#joystick {
+  border: 1px solid #ff0000;
+  color: #0056b3;
+}
+
+/* CSS */
+/* .button {
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  letter-spacing: 2px;
+  text-decoration: none;
+  text-transform: uppercase;
+  color: #000;
+  cursor: pointer;
+  border: 3px solid;
+  padding: 0.25em 0.5em;
+  box-shadow: 1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px, 4px 4px 0px 0px, 5px 5px 0px 0px;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button:active {
+  box-shadow: 0px 0px 0px 0px;
+  top: 5px;
+  left: 5px;
+}
+
+@media (min-width: 768px) {
+  .button {
+    padding: 0.25em 0.75em;
+  }
+} */
+
+
+/* CSS */
+.button {
+  align-items: center;
+  background: #f5f5fa;
+  border: 0;
+  border-radius: 8px;
+  box-shadow: -10px -10px 30px 0 #fff,10px 10px 30px 0 #1d0dca17;
+  box-sizing: border-box;
+  color: #2a1f62;
+  cursor: pointer;
+  display: flex;
+  font-family: "Cascadia Code",Consolas,Monaco,"Andale Mono","Ubuntu Mono",monospace;
+  font-size: 1rem;
+  justify-content: center;
+  line-height: 1.5rem;
+  padding: 15px;
+  position: relative;
+  text-align: left;
+  transition: .2s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: pre;
+  width: max-content;
+  word-break: normal;
+  word-spacing: normal;
+}
+
+.button:hover {
+  background: #f8f8ff;
+  box-shadow: -15px -15px 30px 0 #fff, 15px 15px 30px 0 #1d0dca17;
+}
+
+@media (min-width: 768px) {
+  .button {
+    padding: 24px;
+  }
+}
+
+/* 
+.button {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #353637;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+} */
+
+.button:active {
+  background-color: #0056b3;
+}
+
+.empty {
+  background: none;
+  border: none;
+  cursor: default;
+}
+
+ /* First row: LB occupies two left columns, RB occupies two right columns */
+.LB {
+  grid-area: lb;
+}
+.RB {
+  grid-area: rb;
+}
+
+/* Second row: dpad spans all columns */
+#dpad {
+  display: grid;
+  grid-area: dpad;
+  grid-template-rows: repeat(3, 60px);
+  grid-template-columns: repeat(3, 60px);
+  gap: 5px;
+}
+
+/* Third row: assign each element to its spot */
+.joyL {
+  grid-area: joyL;
+}
+/* Use attribute selectors to target Start and Stop buttons */
+.start{
+  grid-area: start;
+}
+.stop{
+  grid-area: stop;
+}
+.joyR {
+  grid-area: joyR;
+}
+
+.item {
+  padding: 5px;
+}
+
+
+#myTrackPad {
+  grid-area: trackpad;
+  border-radius: 10px;
+  background: #e2e2e2;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  /* border-color: #8e0f0f; */
+  margin: 20px auto;
+  /* position: relative;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none; */
+}
+
+.gamepad {
+  display: inline-grid;
+  justify-items: center;
+  align-items: center;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  grid-template-areas: 
+    "lb . . rb"
+    "dpad dpad trackpad trackpad"
+    "joyL start stop joyR";
+  padding-bottom: 50px;
+  width: 100vw;
+  height: 100vh;
+  gap: 10px;
+}

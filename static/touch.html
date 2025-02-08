@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Touchpad with Click & Double Click</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        #touchpad {
+            width: 300px;
+            height: 400px;
+            background-color: white;
+            border: 2px solid #333;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            user-select: none;
+            touch-action: none; /* Prevent scrolling */
+        }
+        #status {
+            position: absolute;
+            bottom: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="touchpad">
+        <p>Touch or Click Here</p>
+        <div id="status">Status: Waiting...</div>
+    </div>
+
+    <script>
+        const touchpad = document.getElementById("touchpad");
+        const status = document.getElementById("status");
+
+        let initialDistance = null;
+        let isMouseDown = false;
+        let lastTapTime = 0;
+
+        function updateStatus(text) {
+            status.textContent = `Status: ${text}`;
+        }
+
+        // 🖱️ MOUSE EVENTS
+
+        // Mouse Down (Press)
+        touchpad.addEventListener("mousedown", (e) => {
+            isMouseDown = true;
+            updateStatus(`Mouse Down at (${e.clientX}, ${e.clientY})`);
+        });
+
+        // Mouse Move (Drag)
+        touchpad.addEventListener("mousemove", (e) => {
+            if (isMouseDown) {
+                updateStatus(`Mouse Dragging at (${e.clientX}, ${e.clientY})`);
+            }
+        });
+
+        // Mouse Up (Click & Double Click)
+        touchpad.addEventListener("mouseup", (e) => {
+            isMouseDown = false;
+            let currentTime = new Date().getTime();
+            let timeDiff = currentTime - lastTapTime;
+
+            if (timeDiff < 300) {
+                updateStatus("Mouse Double Clicked!");
+                lastTapTime = 0; // Reset to prevent triple-click registering
+            } else {
+                updateStatus("Mouse Clicked!");
+                lastTapTime = currentTime;
+            }
+        });
+
+        // Mouse Leave (Prevent Stuck Dragging)
+        touchpad.addEventListener("mouseleave", () => {
+            if (isMouseDown) {
+                isMouseDown = false;
+                updateStatus("Mouse Released (Out of Bounds)");
+            }
+        });
+
+        // 📱 TOUCH EVENTS
+
+        // Touch Start (Press)
+        touchpad.addEventListener("touchstart", (e) => {
+            if (e.touches.length === 1) {
+                let currentTime = new Date().getTime();
+                let timeDiff = currentTime - lastTapTime;
+
+                if (timeDiff < 300) {
+                    updateStatus("Double Tap!");
+                    lastTapTime = 0;
+                } else {
+                    updateStatus(`Touch Start at (${e.touches[0].clientX}, ${e.touches[0].clientY})`);
+                    lastTapTime = currentTime;
+                }
+            } else if (e.touches.length === 2) {
+                initialDistance = getPinchDistance(e);
+                updateStatus("Pinch Started");
+            }
+        });
+
+        // Touch Move (Drag / Pinch)
+        touchpad.addEventListener("touchmove", (e) => {
+            if (e.touches.length === 1) {
+                updateStatus(`Dragging at (${e.touches[0].clientX}, ${e.touches[0].clientY})`);
+            } else if (e.touches.length === 2) {
+                const newDistance = getPinchDistance(e);
+                if (initialDistance) {
+                    if (newDistance > initialDistance) {
+                        updateStatus("Pinching Out (Zoom In)");
+                    } else {
+                        updateStatus("Pinching In (Zoom Out)");
+                    }
+                }
+            }
+            e.preventDefault(); // Prevent scrolling
+        });
+
+        // Touch End (Release)
+        touchpad.addEventListener("touchend", () => {
+            updateStatus("Touch Released");
+        });
+
+        // Helper Function: Calculate Distance for Pinch Zoom
+        function getPinchDistance(event) {
+            const [touch1, touch2] = event.touches;
+            const dx = touch2.clientX - touch1.clientX;
+            const dy = touch2.clientY - touch1.clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+    </script>
+
+</body>
+</html>
