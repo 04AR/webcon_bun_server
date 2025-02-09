@@ -7,6 +7,7 @@ Websocket based game controller for making smartphone a x-box game_contoller.
 # TO-DO:
 
 Touchpad     ✅ 
+
 Rumble       ❌
 
 To install dependencies:
