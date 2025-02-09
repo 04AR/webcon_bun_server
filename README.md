@@ -1,5 +1,14 @@
 # webcon
 
+WebCon (web controller), project of mine created, cuz my broke ass can't afford the game controller.
+
+Websocket based game controller for making smartphone a x-box game_contoller.
+
+# TO-DO:
+
+Touchpad     ✅ 
+Rumble       ❌
+
 To install dependencies:
 
 ```bash
